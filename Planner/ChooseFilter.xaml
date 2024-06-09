@@ -1,0 +1,22 @@
+﻿<Window x:Class="Planner.ChooseFilter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Planner"
+        mc:Ignorable="d"
+        Title="ChooseFilter" Height="150" Width="440">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="330"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ComboBox Name="Options"  Height="30" Width="300" Margin="10" SelectedIndex="0" HorizontalAlignment="Left" >
+            <ComboBoxItem>Show tasks that are done</ComboBoxItem>
+            <ComboBoxItem>Show done and overdue</ComboBoxItem>
+            <ComboBoxItem>Show overdue</ComboBoxItem>
+            <ComboBoxItem>Show unfinished but still before deadline</ComboBoxItem>
+        </ComboBox>
+        <Button Grid.Column="1" x:Name="Filter" HorizontalAlignment="Left" Width="80" Height="30" Content="Filter" Click="Filter_Click"></Button>
+    </Grid>
+</Window>

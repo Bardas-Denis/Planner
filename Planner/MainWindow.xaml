@@ -1,0 +1,211 @@
+﻿<Window x:Class="Planner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Planner"
+        xmlns:VM="clr-namespace:Planner"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <VM:TDLVM/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2.5*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <ToolBar Grid.Row="0">
+                <Button x:Name="File" Content="File" Click="File_Click" />
+                <Button x:Name="TDL" Content="TDL" Click="TDL_Click"/>
+                <Button x:Name="Task" Content="Task" Click="Task_Click"/>
+                <Button x:Name="View" Content="View" Click="View_Click"/>
+                <Button x:Name="Help" Content="Help" Click="Help_Click"/>
+            </ToolBar>
+            <ToolBar Name="FileToolBar"  Grid.Row="1" Visibility="Visible" >
+                <Button x:Name="openDB" Content="Open Database" Click="openDB_Click"/>
+                <Button x:Name="newDB" Content="New Database" Click="newDB_Click"/>
+                <Button x:Name="archiveDB" Content="Archive Database" Click="archiveDB_Click"/>
+                <Button Name="exit" Content="Exit" Click="exit_Click"/>
+            </ToolBar>
+            <ToolBar Name="TDLToolBar" Grid.Row="1" Visibility="Collapsed" >
+                <Button x:Name="addRoot" Content="Add Root TDL" Click="addRoot_Click"/>
+                <Button x:Name="addSubTDL" Content="Add Sub TDL" Click="addSubTDL_Click"/>
+                <Button x:Name="editTDL" Content="Edit" Click="edit_Click"/>
+                <Button x:Name="deleteTDL" Content="Delete" Click="deleteTDL_Click"/>
+                <Button x:Name="moveUpTDL" Content="Move Up" Click="moveUpTDL_Click"/>
+                <Button x:Name="moveDownTDL" Content="Move Down" Click="moveDownTDL_Click"/>
+                <Button x:Name="changePath" Content="Change Path" Click="changePath_Click"/>
+            </ToolBar>
+            <ToolBar Name="TaskToolBar" Grid.Row="1" Visibility="Collapsed" >
+                <Button x:Name="addTask" Content="Add" Click="addTask_Click"/>
+                <Button x:Name="editTask" Content="Edit" Click="editTask_Click"/>
+                <Button x:Name="deleteTask" Content="Delete" Click="deleteTask_Click"/>
+                <Button x:Name="SetDone" Content="Set Done" Click="SetDone_Click"/>
+                <Button x:Name="TaskUp" Content="Move Up" Click="TaskUp_Click"/>
+                <Button x:Name="TaskDown" Content="Move Down" Click="TaskDown_Click"/>
+                <Button x:Name="changeCategory" Content="Manage Category" Click="changeCategory_Click"/>
+                <Button x:Name="findTask" Content="Find Task" Click="findTask_Click"/>
+            </ToolBar>
+            <ToolBar Name="ViewToolBar" Grid.Row="1" Visibility="Collapsed">
+                <!--<Button Content="Sort"/>-->
+                <Button x:Name="filterTasks" Content="Filter" Click="filterTasks_Click"/>
+                <Button x:Name="resetFilters" Content="Reset Filters" Click="resetFilters_Click"/>
+                <Button x:Name="updateStats" Content="Statistics" Click="updateStats_Click"/>
+            </ToolBar>
+            <ToolBar Name="About" Grid.Row="1" Visibility="Collapsed">
+                <Button x:Name="about" Content="About" Click="about_Click"/>
+                
+            </ToolBar>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2.5*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0.5" Margin="3">
+                <TreeView x:Name="treeView"  ItemsSource="{Binding ItemsCollection}"
+                          PreviewMouseDoubleClick="TreeViewItem_PreviewMouseLeftButtonDown"
+                          Margin="5">
+                    <TreeView.DataContext>
+                        <VM:TDLVM />
+                    </TreeView.DataContext>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <EventSetter Event="PreviewMouseDoubleClick" Handler="TreeViewItem_PreviewMouseLeftButtonDown"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding SubTDL}">
+                            <TextBlock Text="{Binding Name}" FontSize="20"/>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Border>
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.5" Margin="3">
+                <ListBox>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Tasks due today: {0}">
+                                <Binding Path="TasksDueToday"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Tasks due tommorow: {0}">
+                                <Binding Path="TasksDueTomorrow"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Tasks overdue: {0}">
+                                <Binding Path="TasksOverdue"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Tasks done: {0}">
+                                <Binding Path="TasksDone"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Tasks to be done: {0}">
+                                <Binding Path="TasksToDo"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </ListBox>
+            </Border>
+        </Grid>
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition ></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock  Margin="5" FontWeight="Bold">Tasks</TextBlock>
+                <Button x:Name="sortByPriority" Grid.Column="1" Width="100" HorizontalAlignment="Left"  Content="Sort by priority" Click="sortByPriority_Click"></Button>
+                <Button x:Name="sortByDeadline" Grid.Column="3" Width="100" HorizontalAlignment="Left" Content="Sort by deadline" Click="sortByDeadline_Click"></Button>
+            </Grid>
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.5" Margin="3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0">Task Name</Label>
+                        <Label Grid.Column="1">Priority</Label>
+                        <Label Grid.Column="2">Type</Label>
+                        <Label Grid.Column="3">Due Date</Label>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <ListView Name="Tasks" ItemsSource="{Binding SelectedTasks}" PreviewMouseDoubleClick="ListView_PreviewMouseDoubleClick">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="Done">
+                                            <Setter Property="Background" Value="LightGreen"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="220"></ColumnDefinition>
+                                            <ColumnDefinition Width="112"></ColumnDefinition>
+                                            <ColumnDefinition Width="110"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Grid.Column="0"  Text="{Binding TaskName}" ></TextBlock>
+                                        <TextBlock Grid.Column="1"  Text="{Binding Priority}"></TextBlock>
+                                        <TextBlock Grid.Column="2"  Text="{Binding TypeTask}"></TextBlock>
+                                        <TextBlock Grid.Column="3"  Text="{Binding Deadline, StringFormat={}{0:d}}"></TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+            </Border>
+            <TextBlock Grid.Row="2" Margin="5" FontWeight="Bold">Description</TextBlock>
+            <Border Grid.Row="3" BorderBrush="Gray" BorderThickness="0.5" Margin="3">
+                <TextBlock Name="Description" Grid.Row="3" TextWrapping="Wrap" Margin="5" Text="{Binding SelectedTaskDescription}">
+
+                </TextBlock>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
